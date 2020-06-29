@@ -1,4 +1,4 @@
-
+// clase para procesar transacciones 
 import com.mycompany.cuentas_cobrar.IUBanco;
 import com.mycompany.cuentas_cobrar.RegistroCuentasAccesoAleatorio;
 import java.awt.event.ActionEvent;
@@ -31,22 +31,23 @@ public class ProcesadorTransacciones extends JFrame{
     
     public ProcesadorTransacciones (){
         super ("Procesador de Transacciones");
-        
+        //barras de menus y menu archivo
         interfazUsuario = new IUBanco (5);
         getContentPane().add(interfazUsuario);
         interfazUsuario.setVisible(false);
-        
+        //boton de accion
         botonAccion = interfazUsuario.obtenerBotonHacerTarea1();
         botonAccion.setText("Guardar Cambios");
         botonAccion.setEnabled (false);
         
         botonAccion.addActionListener(
-        new ActionListener(){
+        new ActionListener(){ //clase interna 
              public void actionPerformed(ActionEvent evento){
              String accion = evento.getActionCommand();
              realizarAccion ( accion);
-            }
-        });
+            } //fin metodo actionPerformed
+        }//fin clase interna
+        ); //fin addActionListener
         
         botonCancelar = interfazUsuario.obtenerBotonHacerTarea2();
         botonCancelar.setText("Cancelar");
@@ -69,6 +70,7 @@ public class ProcesadorTransacciones extends JFrame{
             
         });
         
+        //crear refeencia campo transaccion
         campoTransaccion = campos [IUBanco.TRANSACCION ];
         campoTransaccion.addActionListener(
         new ActionListener (){
@@ -77,18 +79,21 @@ public class ProcesadorTransacciones extends JFrame{
             }
         });
         
-        JMenuBar barraMenus = new JMenuBar();
+        JMenuBar barraMenus = new JMenuBar(); //establecer menu
         setJMenuBar(barraMenus);
         
         JMenu menuArchivo = new JMenu("Archivo");
         barraMenus.add (menuArchivo);
         
+        //establecer elemento de menú para agregar un registro
         elementoNuevo = new JMenuItem ("Nuevo Registro");
         elementoNuevo.setEnabled(false);
         
         elementoNuevo.addActionListener(
         new ActionListener(){
             public void actionPerformed(ActionEvent evento){
+                // configurar los campos de la GUI para su edición
+
                 campos [IUBanco.CUENTA].setEnabled(true);
                 campos [IUBanco.PRIMERNOMBRE].setEnabled(true);
                 campos [IUBanco.APELLIDO].setEnabled(true);
@@ -103,7 +108,7 @@ public class ProcesadorTransacciones extends JFrame{
                 
             }
         });
-        
+        //establecer elemento de menú para actualizar un registro
         elementoActualizar = new JMenuItem("Actualizar registro");
         elementoActualizar.setEnabled(false);
         
@@ -120,7 +125,7 @@ public class ProcesadorTransacciones extends JFrame{
                 botonAccion.setText("Actualizar");
                 botonCancelar.setEnabled(true);
                 
-                interfazUsuario.borrarCampos();
+                interfazUsuario.borrarCampos();//restablecer campos de texto    
             }
         });
         
@@ -148,6 +153,7 @@ public class ProcesadorTransacciones extends JFrame{
         elementoAbrir.addActionListener(
         new ActionListener(){
             public void actionPerformed(ActionEvent evento){
+               // tratar de abrir el archivo
                 if (!abrirArchivo())
                     return;
                 
@@ -165,7 +171,7 @@ public class ProcesadorTransacciones extends JFrame{
                 
             }
         });
-        
+        // establecer elemento de menú para salir del programa
         elementoSalir = new JMenuItem ("Salir");
         elementoSalir.addActionListener(
                 new ActionListener () {
@@ -184,7 +190,7 @@ public class ProcesadorTransacciones extends JFrame{
                         }
                     }
              });
-        
+        // adjuntar elementos de menú a l menú Archivo
         menuArchivo.add (elementoAbrir);
         menuArchivo.add (elementoNuevo);
         menuArchivo.add (elementoActualizar);
@@ -194,7 +200,8 @@ public class ProcesadorTransacciones extends JFrame{
         
         setSize (400, 250);
         setVisible (true);
-    }
+    }  // fin del constructor
+
     
     public static void main (String args []){
         new ProcesadorTransacciones ();
@@ -226,10 +233,12 @@ public class ProcesadorTransacciones extends JFrame{
             return false;
         }
         return true;
-    }
+    }// fin del método abrirArchivo
         
     private void realizarAccion (String accion){
         try {
+            // obtener los valores de los campos de texto
+
             String [] valores = interfazUsuario.obtenerValoresCampos();
             
             int numeroCuenta = Integer.parseInt (valores[IUBanco.CUENTA]);
@@ -249,7 +258,8 @@ public class ProcesadorTransacciones extends JFrame{
             
             else JOptionPane.showMessageDialog (this, "Acción Incorrecta",
                     "Error al ejecutar la acción", JOptionPane.ERROR_MESSAGE); 
-        }
+        }// fin del bloque try
+
         
         catch (NumberFormatException formato) {
             JOptionPane.showMessageDialog (this, "Entrada Incorrecta",
@@ -265,7 +275,8 @@ public class ProcesadorTransacciones extends JFrame{
             JOptionPane.showMessageDialog(this, "Error al escribir en el archivo",
                     "Error de ES", JOptionPane.ERROR_MESSAGE);
         }
-    }
+    }// fin del método realizarAccion
+
     
     private void mostrarRegistro(String transaccion){
         try {
@@ -278,9 +289,10 @@ public class ProcesadorTransacciones extends JFrame{
             if (registro.obtenerCuenta () == 0)
                 JOptionPane.showMessageDialog(this, "El registro no existe",
                         "Número de cuenta incorrecto", JOptionPane.ERROR_MESSAGE);
-            
+            //obtener la transaccion
             double cambiar = Double.parseDouble (transaccion);
-            
+            // crear un arreglo de cadena para enviarlo a los campos de texto
+
             String[] valores = {String.valueOf (registro.obtenerCuenta ()),
                 registro.obtenerPrimerNombre(), registro.obtenerApellidoPaterno(),
                 String.valueOf(registro.obtenerSaldo() + cambiar),
@@ -289,7 +301,7 @@ public class ProcesadorTransacciones extends JFrame{
             
             interfazUsuario.establecerValoresCampos (valores);
             
-        }
+        }// fin del bloque try
         
         catch (NumberFormatException formato){
             JOptionPane.showMessageDialog(this, "Entrada Incorrecta",
@@ -306,6 +318,8 @@ public class ProcesadorTransacciones extends JFrame{
                     "Error de ES", JOptionPane.ERROR_MESSAGE);
         }
         
-    }
+    } // fin del método mostrarRegistro
+
     
-}
+}// fin de la clase ProcesadorTransacciones
+
